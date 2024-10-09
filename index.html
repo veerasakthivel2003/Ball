@@ -3,53 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>  
-    <button onclick="ballCount()">add</button>
-    <button onclick="moveBall()">move</button>
-    <script>
-            var imgs=[]
-            var x_pos=[]
-            var y_pos=[]
-            var x_vel=[]
-            var y_vel=[]
-            var gravity=1
-        function ballCount(){
-                var img=document.createElement("img")
-                img.src="Pacman.jpg"
-                img.style.width="50px"
-                img.style.height="50px"
-                img.style.position="absolute"
-                img.style.zIndex="5"
-                ypos=Math.floor(Math.random()*600)
-                xpos=Math.floor(Math.random()*1000)
-                img.style.left=xpos+'px'
-                img.style.top=ypos+'px'
-                xvel=5
-                yvel=5
-                document.body.appendChild(img)
-                imgs.push(img)    
-                x_pos.push(xpos)
-                y_pos.push(ypos)
-                x_vel.push(xvel)
-                y_vel.push(yvel)
+    <title>Bouncing Balls</title>
+    <style>
+        body {
+    margin: 0;
+    overflow: hidden;
      }
-function moveBall(){
-            for(i=0;i<imgs.length;i++){
-                x_pos[i]+=x_vel[i]
-                y_pos[i]+=y_vel[i]
-                if(x_pos[i] > 1300 || x_pos[i] <= 0) {
-                    x_vel[i] =-x_vel[i]*gravity
-                }
-                if(y_pos[i] > 610 || y_pos[i] <= 0) {
-                    y_vel[i] =-y_vel[i]*gravity
-                }
-                imgs[i].style.left=x_pos[i]+'px'
-                imgs[i].style.top=y_pos[i]+'px'
+    </style>
+</head>
+<body>
+    <script>
+        var balls = [];
+        var xpos = [];
+        var ypos = [];
+        var xvel = [];
+        var yvel = [];
+        var ballSize = 60;
+        function create() {
+            for (let i = 0; i < 8; i++) {
+                let x = randomX();
+                let y = randomY();
+                let xvell = randomVel();
+                let yvell = randomVel();
+                let color = randomColor();
+                var div = document.createElement("div");
+                div.style.height = div.style.width = ballSize + "px";
+                div.style.position = "absolute";
+                div.style.borderRadius = "50%";
+                div.style.top = y + 'px';
+                div.style.left = x + 'px';
+                div.style.background = color;
+                document.body.appendChild(div);
+                
+                 balls.push(div);
+                 xpos.push(x);
+                 ypos.push(y);
+                 xvel.push(xvell);
+                 yvel.push(yvell);
+            
             }
-            setTimeout(moveBall,20)
+            console.log(balls, xpos, ypos);
         }
-</script>
+        function randomX() {
+            return Math.random() * 600;
+        }
+
+        function randomY() {
+            return Math.random() *600;
+        }
+
+        function randomColor() {
+            let palette = ['red', 'green', 'blue'];
+            return palette[Math.floor(Math.random() * palette.length)];
+        }
+        function randomVel() {
+            return Math.floor(Math.random() * 10) - 5;
+        }
+        function move() {
+            for (let i = 0; i < balls.length; i++) {
+                xpos[i] += xvel[i];
+                ypos[i] += yvel[i];
+                if (xpos[i] <= 0 || xpos[i] >= window.innerWidth - ballSize) {
+                    xvel[i] *= -1;
+                }
+                if (ypos[i] <= 0 || ypos[i] >= window.innerHeight - ballSize) {
+                    yvel[i] *= -1;
+                }
+                xpos[i] = Math.max(0, Math.min(xpos[i], window.innerWidth - ballSize));
+            ypos[i] = Math.max(0, Math.min(ypos[i], window.innerHeight - ballSize));
+            balls[i].style.left = xpos[i] + 'px';
+             balls[i].style.top = ypos[i] + 'px';
+            }
+            requestAnimationFrame(move);
+        }
+
+        create();
+        move();
+    </script>
 </body>
 </html>
